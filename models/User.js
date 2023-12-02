@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const bcrypt = require("bcryptjs");
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -26,7 +27,21 @@ const UserSchema = new mongoose.Schema({
     default: "user",
   },
 });
+//Nombre del schema (no del modelo)
+UserSchema.pre("save", async function (next) {
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
 
+UserSchema.methods.comparePassword = async function (candidatePassword) {
+  const isMatch = bcrypt.compare(candidatePassword, this.password);
+  return isMatch;
+};
 const User = mongoose.model("User", UserSchema);
-
 module.exports = User;
