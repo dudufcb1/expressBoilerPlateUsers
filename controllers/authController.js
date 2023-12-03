@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
+const { createJwt } = require("../utils");
 
 // Controlador para mostrar un mensaje de registro
 const registerController = async (req, res) => {
@@ -18,7 +19,11 @@ const registerController = async (req, res) => {
   const role = isFirstUser ? "admin" : "user";
 
   const user = await User.create({ email, name, password, role });
-  res.status(StatusCodes.CREATED).json({ user });
+  //segun machiko se asignan valores a los props aca abajo
+  const tokenUser = { name: User.name, userId: user._id, role: user.role };
+  const token = createJwt({ payload: tokenUser });
+  //  devolvemos el valor de lo que hemos creado
+  res.status(StatusCodes.CREATED).json({ user: tokenUser, token });
 };
 
 // Controlador para mostrar un mensaje de inicio de sesión

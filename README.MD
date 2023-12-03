@@ -72,8 +72,8 @@
 
 #### JWT
 
-- [] require 'jsonwebtoken' package
-- [] create jwt - jwt.sign(payload,secret,options)
+- [x] require 'jsonwebtoken' package
+- [x] create jwt - jwt.sign(payload,secret,options)
 - [] verify jwt - jwt.verify(token,secret)
 - [] add variables in .env JWT_SECRET=jwtSecret and JWT_LIFETIME=1d
 - [] restart the server !!!!
