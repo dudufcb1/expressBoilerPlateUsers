@@ -74,39 +74,39 @@
 
 - [x] require 'jsonwebtoken' package
 - [x] create jwt - jwt.sign(payload,secret,options)
-- [] verify jwt - jwt.verify(token,secret)
-- [] add variables in .env JWT_SECRET=jwtSecret and JWT_LIFETIME=1d
-- [] restart the server !!!!
-- [] refactor code, create jwt functions in utils
-- [] refactor cookie code
-- [] setup func attachCookiesToResponse
-- [] accept payload(res, tokenUser)
-- [] create token, setup cookie
-- [] optionally send back the response
+- [x] verify jwt - jwt.verify(token,secret)
+- [x] add variables in .env JWT_SECRET=jwtSecret and JWT_LIFETIME=1d
+- [x] restart the server !!!!
+- [x] refactor code, create jwt functions in utils
+- [x] refactor cookie code
+- [x] setup func attachCookiesToResponse
+- [x] accept payload(res, tokenUser)
+- [x] create token, setup cookie
+- [x] optionally send back the response
 
 #### Login Route
 
-- [] check if email and password exist, if one missing return 400
-- [] find user, if no user return 401
-- [] check password, if does not match return 401
-- [] if everything is correct, attach cookie
-  and send back the same response as in register
+- [x] check if email and password exist, if one missing return 400
+- [x] find user, if no user return 401
+- [x] check password, if does not match return 401
+- [x] if everything is correct, attach cookie
+      and send back the same response as in register
 
 #### Logout Route
 
-- [] set token cookie equal to some string value
-- [] set expires:new Date(Date.now())
+- [x] set token cookie equal to some string value
+- [x] set expires:new Date(Date.now())
 
 #### User Routes Structure
 
-- [] add userController file
-- [] export (getAllUsers,getSingleUser,showCurrentUser,updateUser,updateUserPassword) functions
-- [] res.send('some string value')
-- [] setup userRoutes file
-- [] import all controllers
-- [] setup just one route - router.route('/').get(getAllUsers);
-- [] import userRoutes as userRouter in the app.js
-- [] setup app.use('/api/v1/users', userRouter)
+- [x] add userController file
+- [x] export (getAllUsers,getSingleUser,showCurrentUser,updateUser,updateUserPassword) functions
+- [x] res.send('some string value')
+- [x] setup userRoutes file
+- [x] import all controllers
+- [x] setup just one route - router.route('/').get(getAllUsers);
+- [x] import userRoutes as userRouter in the app.js
+- [x] setup app.use('/api/v1/users', userRouter)
 
 #### GetAllUsers and GetSingleUser
 

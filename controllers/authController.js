@@ -25,13 +25,32 @@ const registerController = async (req, res) => {
 };
 
 // Controlador para mostrar un mensaje de inicio de sesión
-const loginController = async ({ res, user: tokenUser }) => {
-  res.send("Mensaje de inicio de sesión");
+const loginController = async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    throw new CustomError.BadRequestError("Please provide email and password");
+  }
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new CustomError.UnauthenticatedError("Invalid credentials");
+  }
+  const isPasswordCorrect = await user.comparePassword(password);
+  if (!isPasswordCorrect) {
+    throw new CustomError.UnauthenticatedError("Invalid credentials");
+  }
+  //segun machiko se asignan valores a los props aca abajo ESTO ES EL PAYLOAD
+  const tokenUser = { name: user.name, userId: user._id, role: user.role };
+  attachCookiesToResponse({ res, user: tokenUser });
+  res.status(StatusCodes.CREATED).json({ user: tokenUser });
 };
 
 // Controlador para mostrar un mensaje de cierre de sesión
 const logoutController = async (req, res) => {
-  res.send("Mensaje de cierre de sesión");
+  res.cookie("token", "logout", {
+    httpOnly: true,
+    expires: new Date(Date.now),
+  });
+  res.status(StatusCodes.OK).json({ msg: "User logged out" });
 };
 
 module.exports = {
