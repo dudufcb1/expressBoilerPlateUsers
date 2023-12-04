@@ -16,11 +16,11 @@ const {
 router
   .route("/")
   .get(authenticateUser, authorizePermissions("admin"), getAllUsersController);
-router.route("/showMe").get(showCurrentUserController);
+router.route("/showMe").get(authenticateUser, showCurrentUserController);
 router.route("/updateUser").patch(updateUserController);
-router.route("/updatePassword").patch(updateUserPasswordController);
 router
-  .route("/:id")
-  .get(authenticateUser, authorizePermissions("user"), getSingleUserController);
+  .route("/updatePassword")
+  .patch(authenticateUser, updateUserPasswordController);
+router.route("/:id").get(authenticateUser, getSingleUserController);
 
 module.exports = router;

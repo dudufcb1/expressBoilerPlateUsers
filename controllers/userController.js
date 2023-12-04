@@ -11,18 +11,16 @@ const getAllUsersController = async (req, res) => {
 
 // Controlador para obtener un solo usuario
 const getSingleUserController = async (req, res) => {
-  console.log(req.user.name);
   const user = await User.find({ _id: req.params.id }).select("-password");
   if (!user) {
     throw new CustomError.NotFoundError(`No user with id: ${req.params.id}`);
   }
-  res.status(StatusCodes.OK).json(user);
+  res.status(StatusCodes.OK).json({ user });
 };
 
 // Controlador para mostrar el usuario actual
 const showCurrentUserController = async (req, res) => {
-  console.log(req.user.name);
-  res.status(200).json({ message: "Mostrar el usuario actual" });
+  res.status(StatusCodes.OK).json({ user: req.user });
 };
 
 // Controlador para actualizar un usuario
@@ -32,7 +30,18 @@ const updateUserController = async (req, res) => {
 
 // Controlador para actualizar la contraseña de un usuario
 const updateUserPasswordController = async (req, res) => {
-  res.status(200).json({ message: "Actualizar contraseña de usuario" });
+  const { oldPassword, newPassword } = req.body;
+  if (!oldPassword || !newPassword) {
+    throw new CustomError.BadRequestError("Please provide both values");
+  }
+  const user = await User.findOne({ _id: req.user.userId });
+  const isPasswordCorrect = await await user.comparePassword(oldPassword);
+  if (!isPasswordCorrect) {
+    throw new CustomError.UnauthenticatedError("Invalid credentials");
+  }
+  user.password = newPassword;
+  await user.save();
+  res.status(StatusCodes.OK).json({ msg: "Sucess! Password Updated" });
 };
 module.exports = {
   getAllUsersController,

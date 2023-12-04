@@ -38,9 +38,11 @@ const loginController = async (req, res) => {
   if (!isPasswordCorrect) {
     throw new CustomError.UnauthenticatedError("Invalid credentials");
   }
+
   //segun machiko se asignan valores a los props aca abajo ESTO ES EL PAYLOAD
   const tokenUser = { name: user.name, userId: user._id, role: user.role };
   attachCookiesToResponse({ res, user: tokenUser });
+
   res.status(StatusCodes.CREATED).json({ user: tokenUser });
 };
 

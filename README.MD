@@ -111,8 +111,8 @@
 #### GetAllUsers and GetSingleUser
 
 - [x] Get all users where role is 'user' and remove password
-- [] Get Single User where id matches id param and remove password
-- [] If no user 404
+- [x] Get Single User where id matches id param and remove password
+- [x] If no user 404
 
 #### Authenticate User Setup
 
@@ -120,16 +120,16 @@
 
 #### Authorize Permissions Setup
 
-- [] hardcode
+- [x] hardcode
 
 #### Authorize Permissions Complete
 
-- [] introduce params
+- [x] introduce params
 
 #### ShowCurrentUser
 
-- [] get user from req
-- [] send response with user
+- [x] get user from req
+- [x] send response with user
 
 #### UpdateUserPassword
 
