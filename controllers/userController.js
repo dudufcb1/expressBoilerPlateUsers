@@ -1,7 +1,7 @@
 const User = require("../models/User");
 const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
-const { createJwt, attachCookiesToResponse } = require("../utils");
+const { createTokenUser, attachCookiesToResponse } = require("../utils");
 
 // Controlador para obtener todos los usuarios
 const getAllUsersController = async (req, res) => {
@@ -25,7 +25,21 @@ const showCurrentUserController = async (req, res) => {
 
 // Controlador para actualizar un usuario
 const updateUserController = async (req, res) => {
-  res.status(200).json({ message: "Actualizar usuario" });
+  const { name, email } = req.body;
+  if (!email || !name) {
+    throw new CustomError.BadRequestError("Please provide both values");
+  }
+
+  // 3 objetos, criterio de busqueda, campos a actualizar, correr validadores para no actualizar sin ellos
+  const user = await User.findOneAndUpdate(
+    { _id: req.user.userId },
+    { email, name },
+    { new: true, runValidators: true }
+  );
+  console.log(user);
+  const tokenUser = createTokenUser(user);
+  attachCookiesToResponse({ res, user: tokenUser });
+  res.status(StatusCodes.OK).json({ user: tokenUser });
 };
 
 // Controlador para actualizar la contraseña de un usuario

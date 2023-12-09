@@ -1,7 +1,11 @@
 const User = require("../models/User");
 const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
-const { createJwt, attachCookiesToResponse } = require("../utils");
+const {
+  createJwt,
+  attachCookiesToResponse,
+  createTokenUser,
+} = require("../utils");
 
 // Controlador para mostrar un mensaje de registro
 const registerController = async (req, res) => {
@@ -19,7 +23,7 @@ const registerController = async (req, res) => {
   const role = isFirstUser ? "admin" : "user";
   const user = await User.create({ email, name, password, role });
   //segun machiko se asignan valores a los props aca abajo ESTO ES EL PAYLOAD
-  const tokenUser = { name: user.name, userId: user._id, role: user.role };
+  const tokenUser = createTokenUser(user);
   attachCookiesToResponse({ res, user: tokenUser });
   res.status(StatusCodes.CREATED).json({ user: tokenUser });
 };
@@ -40,10 +44,10 @@ const loginController = async (req, res) => {
   }
 
   //segun machiko se asignan valores a los props aca abajo ESTO ES EL PAYLOAD
-  const tokenUser = { name: user.name, userId: user._id, role: user.role };
+  const tokenUser = createTokenUser(user);
   attachCookiesToResponse({ res, user: tokenUser });
 
-  res.status(StatusCodes.CREATED).json({ user: tokenUser });
+  res.status(StatusCodes.OK).json({ user: tokenUser });
 };
 
 // Controlador para mostrar un mensaje de cierre de sesión
