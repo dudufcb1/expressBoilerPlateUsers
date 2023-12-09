@@ -10,7 +10,6 @@ const authenticateUser = async (req, res, next) => {
       const payload = isTokenValid({ token });
       //Se asigna para que se vaya a las cabeceras, se propague, pero solo en las que
       // el middleware pasa, no hace la cabecera global, solo por las que pasó el middleware
-      console.log(payload);
 
       req.user = {
         name: payload.name,

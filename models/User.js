@@ -29,6 +29,9 @@ const UserSchema = new mongoose.Schema({
 });
 //Nombre del schema (no del modelo)
 UserSchema.pre("save", async function (next) {
+  //console.log(this.modifiedPaths()); <- muestra lo que estamos modificando atraves de este hook
+  //console.log(this.isModified('Name')); <- muestra lo que estamos modificando atraves de este hook
+  if (!this.isModified("password")) return;
   try {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);

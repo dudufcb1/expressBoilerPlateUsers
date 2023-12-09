@@ -1,7 +1,11 @@
 const User = require("../models/User");
 const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
-const { createTokenUser, attachCookiesToResponse } = require("../utils");
+const {
+  createTokenUser,
+  attachCookiesToResponse,
+  checkPermisions,
+} = require("../utils");
 
 // Controlador para obtener todos los usuarios
 const getAllUsersController = async (req, res) => {
@@ -11,10 +15,12 @@ const getAllUsersController = async (req, res) => {
 
 // Controlador para obtener un solo usuario
 const getSingleUserController = async (req, res) => {
-  const user = await User.find({ _id: req.params.id }).select("-password");
+  const user = await User.findOne({ _id: req.params.id }).select("-password");
   if (!user) {
     throw new CustomError.NotFoundError(`No user with id: ${req.params.id}`);
   }
+  //req es el logueado user es el que se recupera (podria ser cualquier)
+  checkPermisions(req.user, user._id);
   res.status(StatusCodes.OK).json({ user });
 };
 
@@ -23,20 +29,20 @@ const showCurrentUserController = async (req, res) => {
   res.status(StatusCodes.OK).json({ user: req.user });
 };
 
-// Controlador para actualizar un usuario
 const updateUserController = async (req, res) => {
   const { name, email } = req.body;
   if (!email || !name) {
     throw new CustomError.BadRequestError("Please provide both values");
   }
+  //le pedimos a req.body que nos regale le id, para buscar
+  const user = await User.findOne({ _id: req.user.userId });
+  console.log(email);
+  //asignamos nuevos valores
+  user.email = email;
+  user.name = name;
 
-  // 3 objetos, criterio de busqueda, campos a actualizar, correr validadores para no actualizar sin ellos
-  const user = await User.findOneAndUpdate(
-    { _id: req.user.userId },
-    { email, name },
-    { new: true, runValidators: true }
-  );
-  console.log(user);
+  await user.save();
+
   const tokenUser = createTokenUser(user);
   attachCookiesToResponse({ res, user: tokenUser });
   res.status(StatusCodes.OK).json({ user: tokenUser });
@@ -64,3 +70,23 @@ module.exports = {
   updateUserController,
   updateUserPasswordController,
 };
+
+/* // Controlador para actualizar un usuario
+const updateUserController = async (req, res) => {
+  const { name, email } = req.body;
+  if (!email || !name) {
+    throw new CustomError.BadRequestError("Please provide both values");
+  }
+
+  // 3 objetos, criterio de busqueda, campos a actualizar, correr validadores para no actualizar sin ellos
+  const user = await User.findOneAndUpdate(
+    { _id: req.user.userId },
+    { email, name },
+    { new: true, runValidators: true }
+  );
+  console.log(user);
+  const tokenUser = createTokenUser(user);
+  attachCookiesToResponse({ res, user: tokenUser });
+  res.status(StatusCodes.OK).json({ user: tokenUser });
+};
+ */
